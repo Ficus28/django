@@ -44,7 +44,7 @@ class Post(models.Model):
     )
     category = models.ForeignKey(
         Category,
-        null=False,
+        null=True,
         on_delete=models.SET_NULL,
         verbose_name='Категория'
     )
