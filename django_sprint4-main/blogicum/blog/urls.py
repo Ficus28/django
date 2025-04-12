@@ -23,4 +23,9 @@ urlpatterns = [
     
     # Выход из системы
     path('logout/', LogoutView.as_view(), name='logout'),
+
+    path('posts/<int:post_id>/comment/', views.add_comment, name='add_comment'),
+    path('comments/<int:comment_id>/edit/', views.edit_comment, name='edit_comment'),
+    path('comments/<int:comment_id>/delete/', views.delete_comment, name='delete_comment'),
+
 ]
