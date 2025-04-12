@@ -4,12 +4,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, authenticate
 from django.core.paginator import Paginator
 from django.utils import timezone
-from .models import Comment
-from .forms import CommentForm
-
-
-from .models import Post, Category
-from .forms import PostForm, RegistrationForm, UserProfileForm
+from .models import Comment, Post, Category
+from .forms import PostForm, RegistrationForm, UserProfileForm, CommentForm
 
 # Главная страница
 def index(request):
@@ -46,7 +42,6 @@ def category_posts(request, category_slug):
         'page_obj': page_obj
     })
 
-# Страница конкретного поста
 def post_detail(request, id):
     post = get_object_or_404(
         Post.objects.select_related('category'),
@@ -55,8 +50,14 @@ def post_detail(request, id):
         pub_date__lte=timezone.now(),
         category__is_published=True
     )
+
+    comments = post.comments.all()  # Получаем все комментарии к посту
+    form = CommentForm()  # Создаем пустую форму для комментария
+
     return render(request, 'blog/detail.html', {
-        'post': post
+        'post': post,
+        'comments': comments,
+        'form': form  # Добавляем форму в контекст
     })
 
 # Создание нового поста
@@ -141,7 +142,6 @@ def add_comment(request, post_id):
         form = CommentForm()
     return render(request, 'blog/comment_form.html', {'form': form, 'post': post})
 
-
 # Редактировать комментарий
 @login_required
 def edit_comment(request, comment_id):
@@ -154,7 +154,6 @@ def edit_comment(request, comment_id):
     else:
         form = CommentForm(instance=comment)
     return render(request, 'blog/comment_form.html', {'form': form, 'post': comment.post})
-
 
 # Удалить комментарий
 @login_required

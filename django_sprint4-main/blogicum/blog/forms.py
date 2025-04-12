@@ -1,7 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
-from .models import Post, Category
-from .models import Comment
+from .models import Post, Category, Comment
 
 # Форма для создания или редактирования поста
 class PostForm(forms.ModelForm):
@@ -38,6 +37,7 @@ class UserProfileForm(forms.ModelForm):
         model = User
         fields = ['first_name', 'last_name', 'email']
 
+# Форма для комментариев
 class CommentForm(forms.ModelForm):
     class Meta:
         model = Comment
