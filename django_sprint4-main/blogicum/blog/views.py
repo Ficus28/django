@@ -1,10 +1,12 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
-from django.utils import timezone
+from django.contrib.auth import login, authenticate
 from .models import Post, Category
-from .forms import PostForm  # Добавим форму для поста
+from .forms import PostForm, RegistrationForm, UserProfileForm
+from django.utils import timezone
 
+# Стандартные представления для страниц
 def index(request):
     now = timezone.now()
     posts = Post.objects.filter(
@@ -47,12 +49,40 @@ def post_create(request):
         form = PostForm()
     return render(request, 'blog/create.html', {'form': form})
 
-# Обновленное представление для профиля с параметром username
+# Страница профиля
 def profile(request, username):
-    # Получаем пользователя по имени (username)
     user = get_object_or_404(User, username=username)
-    
-    # Получаем публикации этого пользователя
     posts = Post.objects.filter(author=user).order_by('-pub_date')
-    
     return render(request, 'blog/profile.html', {'user': user, 'post_list': posts})
+
+# Страница регистрации
+def registration(request):
+    if request.method == 'POST':
+        form = RegistrationForm(request.POST)
+        if form.is_valid():
+            user = form.save(commit=False)
+            user.set_password(form.cleaned_data['password'])
+            user.save()
+            # Входим в систему после регистрации
+            user = authenticate(username=user.username, password=form.cleaned_data['password'])
+            login(request, user)
+            return redirect('blog:profile', username=user.username)
+    else:
+        form = RegistrationForm()
+    return render(request, 'registration/register.html', {'form': form})
+
+# Редактирование профиля
+@login_required
+def edit_profile(request, username):
+    if request.user.username != username:
+        return redirect('blog:profile', username=request.user.username)
+
+    user = get_object_or_404(User, username=username)
+    if request.method == 'POST':
+        form = UserProfileForm(request.POST, instance=user)
+        if form.is_valid():
+            form.save()
+            return redirect('blog:profile', username=username)
+    else:
+        form = UserProfileForm(instance=user)
+    return render(request, 'blog/edit_profile.html', {'form': form})
