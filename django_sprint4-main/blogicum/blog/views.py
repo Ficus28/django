@@ -144,7 +144,7 @@ def add_comment(request, post_id):
 
 # Редактировать комментарий
 @login_required
-def edit_comment(request, comment_id):
+def edit_comment(request, post_id, comment_id):
     comment = get_object_or_404(Comment, id=comment_id, author=request.user)
     if request.method == 'POST':
         form = CommentForm(request.POST, instance=comment)
@@ -157,7 +157,7 @@ def edit_comment(request, comment_id):
 
 # Удалить комментарий
 @login_required
-def delete_comment(request, comment_id):
+def delete_comment(request, post_id, comment_id):
     comment = get_object_or_404(Comment, id=comment_id, author=request.user)
     post_id = comment.post.id
     if request.method == 'POST':
