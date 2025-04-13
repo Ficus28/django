@@ -3,10 +3,12 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static  # <-- Добавили
 
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('blog.urls')),
     path('pages/', include('pages.urls', namespace='pages')), 
+    path('accounts/', include('django.contrib.auth.urls')),
 ]
 
 handler403 = 'blogicum.views.custom_403'

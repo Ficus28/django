@@ -108,4 +108,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
-LOGOUT_REDIRECT_URL = '/'
+LOGIN_REDIRECT_URL = 'blog:index'  # Или другой URL, куда перенаправлять после входа
+LOGIN_URL = 'blog:login'  # URL для входа
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
