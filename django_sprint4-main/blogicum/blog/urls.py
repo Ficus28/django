@@ -12,6 +12,7 @@ urlpatterns = [
     path('posts/<int:id>/delete/', views.delete_post, name='delete_post'),
     path('category/<slug:category_slug>/', views.category_posts, name='category_posts'),
     path('posts/create/', views.post_create, name='create_post'),
+    path('create/', views.post_create, name='post_create'),
 
     # Профиль
     path('profile/<str:username>/', views.profile, name='profile'),
