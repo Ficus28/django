@@ -111,6 +111,17 @@ def edit_profile(request, username):
     form = UserProfileForm(instance=user)
     return render(request, 'blog/edit_profile.html', {'form': form})
 
+def profile(request, username):
+    user = get_object_or_404(User, username=username)
+    posts = Post.objects.filter(author=user).order_by('-pub_date')
+    paginator = Paginator(posts, 10)
+    page_obj = paginator.get_page(request.GET.get('page'))
+    return render(request, 'blog/profile.html', {
+        'profile': user,  # <-- вот это ключ
+        'page_obj': page_obj
+    })
+
+
 # Кастомный выход из системы (разрешает GET)
 @login_required
 def custom_logout(request):
@@ -145,12 +156,30 @@ def edit_comment(request, post_id, comment_id):
         'post': comment.post
     })
 
+# @login_required
+# def delete_comment(request, post_id, comment_id):
+#     comment = get_object_or_404(Comment, id=comment_id, author=request.user)
+#     if request.method == 'POST':
+#         comment.delete()
+#     return redirect('blog:post_detail', id=post_id)
+
 @login_required
 def delete_comment(request, post_id, comment_id):
+    # Получаем комментарий по id и проверяем, что он принадлежит текущему пользователю
     comment = get_object_or_404(Comment, id=comment_id, author=request.user)
+
+    # Если запрос GET, показываем страницу подтверждения
+    if request.method == 'GET':
+        return render(request, 'blog/confirm_delete.html', {'comment': comment, 'post_id': post_id})
+
+    # Если запрос POST, удаляем комментарий
     if request.method == 'POST':
         comment.delete()
+        return redirect('blog:post_detail', id=post_id)
+
+    # На случай, если какой-то другой метод был использован
     return redirect('blog:post_detail', id=post_id)
+
 
 # Управление постами
 @login_required
@@ -174,3 +203,4 @@ def delete_post(request, id):
         post.delete()
         return redirect('blog:index')
     return render(request, 'blog/confirm_delete_post.html', {'post': post})
+
