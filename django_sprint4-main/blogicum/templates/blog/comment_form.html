@@ -10,7 +10,9 @@
       <form method="post" action="{% url 'blog:edit_comment' post.id comment.id %}">
         {% csrf_token %}
         <div class="mb-3">
-            {{ form.text }}
+          <!-- Явно создаем textarea для текста комментария -->
+          <label for="id_text">Текст комментария:</label>
+          <textarea id="id_text" name="text" class="form-control" rows="5">{{ form.text.value }}</textarea>
         </div>
         <div class="d-flex justify-content-between">
           <button type="submit" class="btn btn-primary">Сохранить</button>
