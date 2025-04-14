@@ -12,7 +12,9 @@
         <div class="mb-3">
           <!-- Явно создаем textarea для текста комментария -->
           <label for="id_text">Текст комментария:</label>
-          <textarea id="id_text" name="text" class="form-control" rows="5">{{ form.text.value }}</textarea>
+          <!-- <textarea id="id_text" name="text" class="form-control" rows="5">{{ form.text.value }}</textarea> -->
+          {{ form.text.label_tag }}
+          {{ form.text }}
         </div>
         <div class="d-flex justify-content-between">
           <button type="submit" class="btn btn-primary">Сохранить</button>
